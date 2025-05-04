@@ -1,16 +1,25 @@
 {
     "name": "Dreamy Time",
     "short_name": "Dreamy Time",
-    "start_url": "./",
+    "start_url": "./index.html",
+    "scope": "./",
     "display": "standalone",
-    "background_color": "#ffffff",
-    "theme_color": "#ffffff",
+    "background_color": "#121212",
+    "theme_color": "#121212",
+    "description": "Your favorite songs, anytime, anywhere.",
     "icons": [
-   
-      {
-        "src": "./aasset/moons.png",
-        "sizes": "512x512",
-        "type": "image/png"
-      }
-    ]
-  }
+        {
+            "src": "./aasset/icon.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "./aasset/icon.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ],
+    "orientation": "portrait"
+}
