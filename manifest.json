@@ -1,0 +1,16 @@
+{
+    "name": "Dreamy Time",
+    "short_name": "Dreamy Time",
+    "start_url": "./",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#ffffff",
+    "icons": [
+   
+      {
+        "src": "/aasset/moons.png",
+        "sizes": "512x512",
+        "type": "image/png"
+      }
+    ]
+  }

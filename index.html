@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dreamy Time</title>
+    <link rel="icon" href="aasset/moons.png">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="/manifest.json">
+</head>
+<body>
+    <div class="container">
+      
+
+        <!-- Main Content Sections -->
+        <div id="tracker-section" class="content-section active">
+            <div class="input-section">
+                <h2>Log Your Sleep</h2>
+                <form id="sleep-form">
+                    <label>Bedtime:</label>
+                    <input type="time" id="bedtime" required>
+                    
+                    <label>Wake-up Time:</label>
+                    <input type="time" id="wakeup" required>
+                    
+                    <label>Sleep Quality (1-5):</label>
+                    <input type="number" id="quality" min="1" max="5" required>
+                    
+                    <button type="submit">Save Entry</button>
+                </form>
+            </div>
+
+            <div class="summary-section">
+                <h2>Your Sleep Stats</h2>
+                <div class="stats-card">
+                    <p>Last Night: <span id="last-sleep">-</span> hours</p>
+                    <p>Avg. Sleep: <span id="avg-sleep">-</span> hours</p>
+                    <p>Avg. Quality: <span id="avg-quality">-</span> /5</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="history-section" class="content-section">
+            <h2>Sleep History</h2>
+            <div id="sleep-entries" class="entries-container">
+                <!-- Entries will be added here as cards -->
+            </div>
+        </div>
+
+        <div id="chart-section" class="content-section">
+            <h2>Sleep Trends</h2>
+            <div class="chart-container">
+                <canvas id="sleep-chart"></canvas>
+            </div>
+
+            
+    
+
+          
+        </div>
+
+
+
+        <div id="settings-section" class="content-section">
+            <h2>Settings</h2>
+
+            <div id="margins"></div>
+            <h4>idk what to add here :/</h4>
+                   
+            </div>
+
+        <!-- Bottom Navigation Bar -->
+        <nav class="bottom-nav">
+            <button class="nav-btn active" data-target="tracker-section">
+                <span><i class="fas fa-moon"></i></span> Tracker
+            </button>
+            <button class="nav-btn" data-target="history-section">
+                <span><i class="fas fa-list"></i></span> History
+            </button>
+            <button class="nav-btn" data-target="chart-section">
+                <span><i class="fas fa-chart-bar"></i></span> Chart
+            </button>
+            <button class="nav-btn" data-target="settings-section">
+                <span><i class="fas fa-cog"></i></span> Settings
+            </button>
+        </nav>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM Elements
+            const sleepForm = document.getElementById('sleep-form');
+            const entriesContainer = document.getElementById('sleep-entries');
+            const lastSleepEl = document.getElementById('last-sleep');
+            const avgSleepEl = document.getElementById('avg-sleep');
+            const avgQualityEl = document.getElementById('avg-quality');
+            const sleepChartCtx = document.getElementById('sleep-chart').getContext('2d');
+            const navButtons = document.querySelectorAll('.nav-btn');
+            const contentSections = document.querySelectorAll('.content-section');
+
+            // Data
+            let sleepEntries = JSON.parse(localStorage.getItem('sleepData')) || [];
+            let sleepChart;
+
+            // Initialize
+            updateTable();
+            updateStats();
+            updateChart();
+
+            // Form Submission
+            sleepForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                const bedtime = document.getElementById('bedtime').value;
+                const wakeup = document.getElementById('wakeup').value;
+                const quality = parseInt(document.getElementById('quality').value);
+
+                // Calculate duration
+                const bedtimeMs = new Date(`2000-01-01T${bedtime}`).getTime();
+                const wakeupMs = new Date(`2000-01-01T${wakeup}`).getTime();
+                let duration = (wakeupMs - bedtimeMs) / (1000 * 60 * 60);
+                if (duration < 0) duration += 24; // Handle overnight sleep
+
+                const entry = {
+                    date: new Date().toLocaleDateString(),
+                    bedtime,
+                    wakeup,
+                    duration: duration.toFixed(1),
+                    quality
+                };
+
+                sleepEntries.push(entry);
+                localStorage.setItem('sleepData', JSON.stringify(sleepEntries));
+
+                updateTable();
+                updateStats();
+                updateChart();
+                sleepForm.reset();
+            });
+
+            // Navigation
+            navButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const targetId = this.getAttribute('data-target');
+                    
+                    // Update active nav button
+                    navButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Show target section
+                    contentSections.forEach(section => section.classList.remove('active'));
+                    document.getElementById(targetId).classList.add('active');
+                    
+                    // Special handling for chart section to ensure proper rendering
+                    if (targetId === 'chart-section') {
+                        setTimeout(() => {
+                            if (sleepChart) sleepChart.resize();
+                        }, 100);
+                    }
+                });
+            });
+
+            function updateTable() {
+                entriesContainer.innerHTML = '';
+
+                sleepEntries.forEach((entry, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'sleep-entry-card';
+                    
+                    card.innerHTML = `
+                        <div class="entry-row">
+                            <span class="entry-label">Date:</span>
+                            <span>${entry.date}</span>
+                        </div>
+                        <div class="entry-row">
+                            <span class="entry-label">Bedtime:</span>
+                            <span>${entry.bedtime}</span>
+                        </div>
+                        <div class="entry-row">
+                            <span class="entry-label">Wake-up:</span>
+                            <span>${entry.wakeup}</span>
+                        </div>
+                        <div class="entry-row">
+                            <span class="entry-label">Duration:</span>
+                            <span>${entry.duration} hrs</span>
+                        </div>
+                        <div class="entry-row">
+                            <span class="entry-label">Quality:</span>
+                            <span>${'★'.repeat(entry.quality)}</span>
+                        </div>
+                        <div class="entry-actions">
+                            <button class="delete-btn" data-index="${index}">Delete</button>
+                        </div>
+                    `;
+
+                    entriesContainer.appendChild(card);
+                });
+
+                // Add delete functionality
+                document.querySelectorAll('.delete-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const index = parseInt(this.getAttribute('data-index'));
+                        sleepEntries.splice(index, 1);
+                        localStorage.setItem('sleepData', JSON.stringify(sleepEntries));
+                        updateTable();
+                        updateStats();
+                        updateChart();
+                    });
+                });
+            }
+
+            function updateStats() {
+                if (sleepEntries.length === 0) {
+                    lastSleepEl.textContent = '-';
+                    avgSleepEl.textContent = '-';
+                    avgQualityEl.textContent = '-';
+                    return;
+                }
+
+                const lastEntry = sleepEntries[sleepEntries.length - 1];
+                lastSleepEl.textContent = lastEntry.duration;
+
+                const totalHours = sleepEntries.reduce((sum, entry) => sum + parseFloat(entry.duration), 0);
+                avgSleepEl.textContent = (totalHours / sleepEntries.length).toFixed(1);
+
+                const totalQuality = sleepEntries.reduce((sum, entry) => sum + entry.quality, 0);
+                avgQualityEl.textContent = (totalQuality / sleepEntries.length).toFixed(1);
+            }
+
+            function updateChart() {
+                if (sleepChart) sleepChart.destroy();
+
+                const last7Entries = sleepEntries.slice(-7);
+                const labels = last7Entries.map(entry => entry.date);
+                const durations = last7Entries.map(entry => entry.duration);
+                const qualities = last7Entries.map(entry => entry.quality);
+
+                sleepChart = new Chart(sleepChartCtx, {
+                    type: 'line',
+                    data: {
+                        labels,
+                        datasets: [
+                            {
+                                label: 'Sleep Duration (hrs)',
+                                data: durations,
+                                borderColor: '#4299e1',
+                                backgroundColor: 'rgba(66, 153, 225, 0.1)',
+                                tension: 0.3,
+                                yAxisID: 'y'
+                            },
+                            {
+                                label: 'Sleep Quality (1-5)',
+                                data: qualities,
+                                borderColor: '#9f7aea',
+                                backgroundColor: 'rgba(159, 122, 234, 0.1)',
+                                tension: 0.3,
+                                yAxisID: 'y1'
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false, // Added to allow full control of chart size
+                        scales: {
+                            y: {
+                                type: 'linear',
+                                display: true,
+                                position: 'left',
+                                title: { display: true, text: 'Hours' }
+                            },
+                            y1: {
+                                type: 'linear',
+                                display: true,
+                                position: 'right',
+                                min: 1,
+                                max: 5,
+                                title: { display: true, text: 'Quality' },
+                                grid: { drawOnChartArea: false }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                position: 'top', // Better for mobile
+                            }
+                        }
+                    }
+                });
+            }
+        });
+
+
+        // In your main JavaScript file
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(registration => {
+        console.log('ServiceWorker registration successful');
+      })
+      .catch(err => {
+        console.log('ServiceWorker registration failed: ', err);
+      });
+  });
+}
+        
+
+    </script>
+</body>
+</html>
