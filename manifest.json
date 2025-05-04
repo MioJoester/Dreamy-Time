@@ -8,7 +8,7 @@
     "icons": [
    
       {
-        "src": "/aasset/moons.png",
+        "src": "./aasset/moons.png",
         "sizes": "512x512",
         "type": "image/png"
       }
