@@ -1,24 +1,26 @@
-// sw.js
-const CACHE_NAME = 'my-app-cache-v2.1';
-const urlsToCache = [
+// Filename: sw.js
+const CACHE_NAME = 'streamcore-v3';
+const ASSETS_TO_CACHE = [
   
- 
+  './aasset/moons.png',  // Match your actual icon path
+       // Adjust names as needed
 ];
 
-self.addEventListener('install', event => {
+// Install event - caches important files
+self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then(cache => {
-        return cache.addAll(urlsToCache);
-      })
+      .then((cache) => cache.addAll(ASSETS_TO_CACHE))
+      .catch((err) => console.log('Cache failed:', err))
   );
 });
 
-self.addEventListener('fetch', event => {
+// Fetch event - serves cached files when offline
+self.addEventListener('fetch', (event) => {
   event.respondWith(
     caches.match(event.request)
-      .then(response => {
-        return response || fetch(event.request);
+      .then((cachedResponse) => {
+        return cachedResponse || fetch(event.request);
       })
   );
 });
