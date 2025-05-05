@@ -137,6 +137,7 @@ button[type="submit"]:hover {
     border: none;
     cursor: pointer;
     border: 1px solid   #000;
+    transition: all 0.4s ease-in-out;
 }
 
 .delete-btn:hover {
