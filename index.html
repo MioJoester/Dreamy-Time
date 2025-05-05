@@ -32,14 +32,7 @@
                 </form>
             </div>
 
-            <div class="summary-section">
-                <h2>Your Sleep Stats</h2>
-                <div class="stats-card">
-                    <p>Last Night: <span id="last-sleep">-</span> hours</p>
-                    <p>Avg. Sleep: <span id="avg-sleep">-</span> hours</p>
-                    <p>Avg. Quality: <span id="avg-quality">-</span> /5</p>
-                </div>
-            </div>
+           
         </div>
 
         <div id="history-section" class="content-section">
@@ -53,6 +46,15 @@
             <h2>Sleep Trends</h2>
             <div class="chart-container">
                 <canvas id="sleep-chart"></canvas>
+            </div>
+
+             <div class="summary-section">
+                <h2>Your Sleep Stats</h2>
+                <div class="stats-card">
+                    <p>Last Night: <span id="last-sleep">-</span> hours</p>
+                    <p>Avg. Sleep: <span id="avg-sleep">-</span> hours</p>
+                    <p>Avg. Quality: <span id="avg-quality">-</span> /5</p>
+                </div>
             </div>
 
             
@@ -191,7 +193,7 @@
                             <span>${'★'.repeat(entry.quality)}</span>
                         </div>
                         <div class="entry-actions">
-                            <button class="delete-btn" data-index="${index}">Delete</button>
+                            <button class="delete-btn" data-index="${index}"><i class="fas fa-trash"></i></button>
                         </div>
                     `;
 
