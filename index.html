@@ -15,7 +15,7 @@
       
 
         <!-- Main Content Sections -->
-        <div id="tracker-section" class="content-section active">
+       <div id="tracker-section" class="content-section active">
             <div class="input-section">
                 <h2>Log Your Sleep</h2>
                 <form id="sleep-form">
@@ -28,11 +28,37 @@
                     <label>Sleep Quality (1-5):</label>
                     <input type="number" id="quality" min="1" max="5" required>
                     
-                    <button type="submit">Save Entry</button>
+                    
+              
+
+                <div class="form-group">
+                    <label>Mood before sleeping</label>
+                    <div class="quality-range">
+                        <div class="quality-labels">
+                            <span>Poor</span>
+                            <span>Fair</span>
+                            <span>Good</span>
+                            <span>Very Good</span>
+                            <span>Excellent</span>
+                        </div>
+                        <input type="range" id="quality" min="1" max="5" value="3" step="1" list="quality-markers">
+                        <datalist id="quality-markers">
+                            <option value="1" label="😞"></option>
+                            <option value="2" label="😕"></option>
+                            <option value="3" label="😐"></option>
+                            <option value="4" label="😊"></option>
+                            <option value="5" label="😴"></option>
+                        </datalist>
+                       
+                        
+                    </div>
+                </div>
+
+  <button type="submit" class="submit-btn">Save Sleep Entry</button>
                 </form>
             </div>
 
-           
+            
         </div>
 
         <div id="history-section" class="content-section">
