@@ -88,6 +88,13 @@ h1, h2 {
     color: #666;
 }
 
+#quality-markers {
+ 
+   
+    margin-top: 10px;
+    padding-right: 30px;
+}
+
 input[type="range"] {
     -webkit-appearance: none;
     width: 100%;
