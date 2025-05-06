@@ -1,5 +1,5 @@
 // Filename: sw.js
-const CACHE_NAME = 'streamcore-v4';
+const CACHE_NAME = 'streamcore-v5';
 const ASSETS_TO_CACHE = [
   
   './aasset/moons.png',  // Match your actual icon path
