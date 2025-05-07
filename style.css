@@ -42,6 +42,8 @@ h1, h2 {
 
 }
 
+
+
 #theme:hover {
     background-color: #fff;
     color: #000;
@@ -381,5 +383,9 @@ table {
         cursor: pointer;
         border: 2px solid #fff;
         box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    #special-mobile-optimize {
+     height:30px;
     }
 }
